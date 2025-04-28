@@ -300,7 +300,7 @@ class FotMob:
         await api.close()
 
         if data and isinstance(data, dict):
-            return data if not totw_image else f"https://www.fotmob.com/api/league/totw?leagueId={LeagueId}&season={Season}5&roundId={Round}&lang=en-GB,en-US,en"
+            return data if not totw_image else f"https://www.fotmob.com/api/league/totw?leagueId={LeagueId}&season={Season}&roundId={Round}&lang=en-GB,en-US,en"
         return {} 
     
     @classmethod

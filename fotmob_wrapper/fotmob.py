@@ -6,10 +6,6 @@ import json
 import urllib.parse
 
 class FotMob:
-    ENUMS_PATH = Path(__file__).parent / "tools" / "enums.json"
-
-    with open(ENUMS_PATH, "r", encoding="utf-8") as file:
-        ENUMS = json.load(file)
 
     def __init__(self, api: FotmobApi = None):
         self.api = api or FotmobApi()
@@ -397,25 +393,6 @@ class FotMob:
         if data and isinstance(data, dict):
             return data
         return {}
-    
-    @classmethod
-    async def get_match(cls, Matchid: int) -> Dict[str, Any]:
-        """
-        Retrieves Match Data
-
-        Args:
-            MatchId (int): The ID of the Player
-
-        Returns:
-            Dict[str, Any]: A dictionary containing the Match data
-        """
-        api = FotmobApi()
-        data = await api._get(f"/matchDetails?matchId={Matchid}")
-        await api.close()
-
-        if data and isinstance(data, dict):
-            return data
-        return {} 
     
     @classmethod
     async def get_tv_listings(cls, Matchid: int, CountryCode: str = "GB") -> Dict[str, Any]:

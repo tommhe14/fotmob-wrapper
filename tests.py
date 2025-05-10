@@ -4,7 +4,7 @@ import datetime
 from fotmob_wrapper.fotmob import FotMob
 
 async def main():
-    result = await FotMob.player_stats(PlayerId=961995)
+    result = await FotMob.live_games()
     print(result)
 
 

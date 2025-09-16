@@ -2,6 +2,8 @@
 
 A comprehensive Python wrapper for the FotMob API with built-in proxy support for bypassing restrictions.
 
+[![PyPI Downloads](https://static.pepy.tech/badge/fotmob-wrapper)](https://pepy.tech/projects/fotmob-wrapper)
+
 ## Installation
 
 ```py

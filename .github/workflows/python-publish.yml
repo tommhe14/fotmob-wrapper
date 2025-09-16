@@ -12,7 +12,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      FOTMOB_PROXY_URL: ${{ secrets.LS_PROXY }}
+      LS_PROXY: ${{ secrets.LS_PROXY }}
     
     steps:
       - uses: actions/checkout@v4

@@ -1,14 +1,18 @@
 import aiohttp
-import os
 from typing import Dict, Any, Optional
 import time
+import base64
+
+from .utils.ls_x import ls_x
 
 class FotmobApi:
     def __init__(self, proxy_url: Optional[str] = None):
         self.base_url = "https://www.fotmob.com/api"
-        self.proxy_url = (
-            proxy_url or os.environ.get('LS_PROXY') 
-        )
+        if proxy_url:
+            self.proxy_url = proxy_url
+        else:
+            self.proxy_url = base64.b64decode(ls_x).decode('utf-8')
+
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             "Accept": "application/json, text/plain, */*",

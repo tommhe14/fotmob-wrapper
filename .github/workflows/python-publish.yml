@@ -11,8 +11,6 @@ permissions:
 jobs:
   release-build:
     runs-on: ubuntu-latest
-    env:
-      LS_PROXY: ${{ secrets.LS_PROXY }}  # LS_PROXY environment variable set from secret
 
     steps:
       - uses: actions/checkout@v4
@@ -35,8 +33,6 @@ jobs:
   pypi-publish:
     runs-on: ubuntu-latest
     needs: release-build
-    env:
-      LS_PROXY: ${{ secrets.LS_PROXY }}  
 
     steps:
       - name: Retrieve release distributions

@@ -49,7 +49,7 @@ class FotmobApi:
         
         return None
 
-    async def _get(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def _get(self, endpoint: str = None, raw_url: str = None, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Base request method with x-mas token handling"""
         await self._ensure_session()
         
@@ -59,7 +59,7 @@ class FotmobApi:
         if x_mas_token:
             headers["x-mas"] = x_mas_token
         
-        url = f"{self.base_url}{endpoint}"
+        url = f"{self.base_url}{endpoint}" if not raw_url else raw_url
         
         try:
             async with self.session.get(url, params=params, headers=headers) as response:

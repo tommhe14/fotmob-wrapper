@@ -245,7 +245,36 @@ class FotMob:
 
     async def get_match(self, match_id: int) -> Dict[str, Any]:
         """Get match details"""
-        return await self._api._get(f"/data/match?id={match_id}")
+        return await self._api._get(f"/data/match?id={match_id}") 
+    
+    async def get_match_details(self, match_id: int) -> Dict[str, Any]:
+        """Get match details"""
+        return await self._api._get(f"/data/matchDetails?matchId={match_id}") # https://www.fotmob.com/api/data/matchMedia?matchId=4947153&ccode3=GBR
+    
+    async def get_match_highlight_video(self, match_id: int, ccode3: str = "GBR") -> Dict[str, Any]:
+        """Get match highlight video"""
+        return await self._api._get(f"/data/matchMedia?matchId={match_id}&ccode3={ccode3}") 
+
+    async def get_match_comments(self, match_id: int) -> Dict[str, Any]:
+        """Get match live comments"""
+        matchData = await self._api._get(f"/data/match?id={match_id}")
+
+        if matchData:
+            homeTeam = matchData.get("home", {}).get("name")
+            awayTeam = matchData.get("away", {}).get("name")
+
+            ltc_url_path = f"data.fotmob.com/webcl/ltc/gsm/{match_id}_en.json.gz"
+            
+            encoded_ltc_url = urllib.parse.quote(ltc_url_path, safe='')
+            
+            teams_param = urllib.parse.quote(f'["{homeTeam}","{awayTeam}"]')
+            
+            url = f"https://www.fotmob.com/api/data/ltc?ltcUrl={encoded_ltc_url}&teams={teams_param}"
+            
+            return await self._api._get(raw_url=url)
+        
+        return {}
+
 
     async def get_match_odds(self, match_id: int, ccode3: str = "GBR") -> Dict[str, Any]:
         """Get match odds"""

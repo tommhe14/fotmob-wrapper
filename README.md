@@ -69,7 +69,7 @@ await fotmob.get_league_news(47)  # League news
 await fotmob.get_league_fixtures(47, "2024/2025")  # Season fixtures
 await fotmob.totw_rounds(47, "2024/2025")  # TOTW rounds
 await fotmob.totw(47, "2024/2025", 1)  # Team of the Week
-await fotmob.get_league_next_fixture(47)
+await fotmob.get_league_next_fixture(47) # Next unplayed fixture
 ```
 
 # Team Methods
@@ -79,10 +79,10 @@ await fotmob.get_team(9825)  # Team details (9825 = Arsenal)
 await fotmob.get_team_news(9825)  # Team news
 await fotmob.get_team_fixtures(9825)  # Team fixtures
 await fotmob.get_team_stats(9825, 27110)  # Team tournament stats
-await fotmob.get_team_next_fixture(9825)
-await fotmob.get_team_last_fixture(9825)
-await fotmob.get_team_next_fixtures(9825)
-await fotmob.get_team_last_fixtures(9825)
+await fotmob.get_team_next_fixture(9825) # Next unplayed fixture
+await fotmob.get_team_last_fixture(9825) # Last finished fixture
+await fotmob.get_team_next_fixtures(9825) # Next unplayed fixtures
+await fotmob.get_team_last_fixtures(9825) # Last finished fixtures
 ```
 
 # Player Methods
@@ -100,6 +100,9 @@ await fotmob.get_notable_matches()  # Notable matches
 await fotmob.get_match(4813416)  # Match details
 await fotmob.get_match_odds(4813416)  # Match odds
 await fotmob.get_tv_listings(4813416, "GB")  # TV listings
+await fotmob.get_match_details(4813416) # Match Details (further match info)
+await fotmob.get_match_highlight_video(4813416) # Match Highlight Video URL
+await fotmob.get_match_comments(4813416) # Match Live running comments, play by play.
 ```
 
 # Utility Methods

@@ -48,6 +48,29 @@ class FotMob:
     async def get_league(self, league_id: int, ccode3: str = "GBR") -> Dict[str, Any]:
         """Get league details"""
         return await self._api._get(f"/data/leagues?id={league_id}&ccode3={ccode3}")
+    
+    async def get_league_current_season(self, league_id: int) -> str:
+        """Get league current season"""
+        getLeague = await self._api._get(f"/data/leagues?id={league_id}&ccode3=GBR")
+        
+        if getLeague and isinstance(getLeague, dict):
+            table_data = getLeague.get("table")
+            
+            if isinstance(table_data, dict):
+                data = table_data.get("data", {})
+                season = data.get("selectedSeason")
+                if season:
+                    return season
+            
+            season = getLeague.get("selectedSeason")
+            if season:
+                return season
+            
+            seasons = getLeague.get("allAvailableSeasons", [])
+            if seasons and isinstance(seasons, list) and len(seasons) > 0:
+                return seasons[0]
+        
+        return None
 
     async def standings(self, league_id: int) -> Dict[str, Any]:
         """Get league standings/table"""
@@ -61,6 +84,20 @@ class FotMob:
         """Get league fixtures for a season"""
         encoded_season = urllib.parse.quote(season)
         return await self._api._get(f"/data/fixtures?id={league_id}&season={encoded_season}")
+    
+    async def get_league_next_fixture(self, league_id: int) -> Dict[str, Any]:
+        """Get league fixtures for a season"""
+        leagueData = await self.get_league(league_id)
+
+        match = None
+
+        if leagueData:
+            matchIndex = leagueData.get("matches", {}).get("firstUnplayedMatch", {}).get("firstUnplayedMatchIndex")
+            
+            matches = leagueData.get("matches", {}).get("allMatches", [])
+            match = matches[matchIndex - 1]
+        
+        return match
 
     async def totw_rounds(self, league_id: int, season: str) -> Dict[str, Any]:
         """Get TOTW rounds"""
@@ -83,13 +120,106 @@ class FotMob:
     async def get_team_news(self, team_id: int, language: str = "en-GB", start_index: int = 0) -> Dict[str, Any]:
         """Get team news"""
         return await self._api._get(f"/data/tlnews?id={team_id}&type=team&language={language}&startIndex={start_index}")
+    
+    async def get_team_next_fixture(self, team_id: int) -> Dict[str, Any]:
+        """Get team next fixture (first unfinished fixture)"""
+        team_data = await self.get_team(team_id)
+        
+        if not team_data or not isinstance(team_data, dict):
+            return {}
+        
+        fixtures = None
+        
+        if "fixtures" in team_data:
+            fixtures = team_data.get("fixtures", {}).get("allFixtures", {}).get("fixtures", [])
 
-    async def get_team_fixtures(self, team_id: int, before: Optional[int] = None) -> Dict[str, Any]:
+        if fixtures and isinstance(fixtures, list):
+            for fixture in fixtures:
+                if (isinstance(fixture, dict) and 
+                    "status" in fixture and 
+                    isinstance(fixture["status"], dict)):
+                    
+                    status = fixture["status"]
+                    if (status.get("finished") is False or 
+                        status.get("started") is False):
+                        
+                        return fixture
+        
+        return {}
+
+    async def get_team_last_fixture(self, team_id: int) -> Dict[str, Any]:
+        """Get team last finished fixture (most recent completed match)"""
+        team_data = await self.get_team(team_id)
+        
+        if not team_data or not isinstance(team_data, dict):
+            return {}
+        
+        fixtures = None
+        
+        if "fixtures" in team_data:
+            fixtures = team_data.get("fixtures", {}).get("allFixtures", {}).get("fixtures", [])
+        
+        last_finished_fixture = None
+        
+        if fixtures and isinstance(fixtures, list):
+            for fixture in fixtures:
+                if (isinstance(fixture, dict) and 
+                    "status" in fixture and 
+                    isinstance(fixture["status"], dict)):
+                    
+                    status = fixture["status"]
+                    if status.get("finished") is True:
+                        last_finished_fixture = fixture
+            
+            return last_finished_fixture or {}
+        
+        return {}
+
+    async def get_team_fixtures(self, team_id: int) -> Dict[str, Any]:
         """Get team fixtures"""
-        endpoint = f"/data/pageableFixtures?teamId={team_id}"
-        if before:
-            endpoint += f"&before={before}"
-        return await self._api._get(endpoint)
+        team_data = await self.get_team(team_id)
+        
+        if not team_data or not isinstance(team_data, dict):
+            return {}
+        
+        fixtures = None
+        
+        if "fixtures" in team_data:
+            fixtures = team_data.get("fixtures", {}).get("allFixtures", {}).get("fixtures", [])
+        
+        return fixtures or []
+    
+    async def get_team_next_fixtures(self, team_id: int) -> Dict[str, Any]:
+        """Get team next fixtures"""
+        team_data = await self.get_team(team_id)
+        
+        if not team_data or not isinstance(team_data, dict):
+            return {}
+        
+        fixtures = None
+        
+        if "fixtures" in team_data:
+            fixtures = team_data.get("fixtures", {}).get("allFixtures", {}).get("fixtures", [])
+        
+            fixtures = [fixture for fixture in fixtures if fixture.get("status", {}).get("finished", None) is False]
+
+        return fixtures
+    
+    async def get_team_last_fixtures(self, team_id: int) -> Dict[str, Any]:
+        """Get team last finished fixtures"""
+        team_data = await self.get_team(team_id)
+        
+        if not team_data or not isinstance(team_data, dict):
+            return {}
+        
+        fixtures = None
+        
+        if "fixtures" in team_data:
+            fixtures = team_data.get("fixtures", {}).get("allFixtures", {}).get("fixtures", [])
+        
+            fixtures = [fixture for fixture in fixtures if fixture.get("status", {}).get("finished", None) is True]
+
+        return fixtures
 
     async def get_team_stats(self, team_id: int, tournament_id: int, is_team_sub_tab: bool = False) -> Dict[str, Any]:
         """Get team statistics for a tournament"""
@@ -129,7 +259,7 @@ class FotMob:
         """Get fixture difficulty for a league"""
         return await self._api._get(f"/data/fixtureDifficulty?id={league_id}")
 
-    async def get_historical_table(self, team_id: int, table_link: str) -> Dict[str, Any]:
+    async def get_historical_table(self, team_id: int, table_link: str = "tables.ext.47.fot.gz") -> Dict[str, Any]:
         """Get historical table data"""
         return await self._api._get(f"/data/historicaltable?teamId={team_id}&tableLink={table_link}")
 

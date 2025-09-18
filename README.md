@@ -61,11 +61,13 @@ await fotmob.search_league("league name")
 
 ```py
 await fotmob.get_league(47)  # League details (47 = Premier League)
+await fotmob.get_league_current_season(47)  # League current season
 await fotmob.standings(47)  # League table
 await fotmob.get_league_news(47)  # League news
 await fotmob.get_league_fixtures(47, "2024/2025")  # Season fixtures
 await fotmob.totw_rounds(47, "2024/2025")  # TOTW rounds
 await fotmob.totw(47, "2024/2025", 1)  # Team of the Week
+await fotmob.get_league_next_fixture(47)
 ```
 
 # Team Methods
@@ -75,6 +77,10 @@ await fotmob.get_team(9825)  # Team details (9825 = Arsenal)
 await fotmob.get_team_news(9825)  # Team news
 await fotmob.get_team_fixtures(9825)  # Team fixtures
 await fotmob.get_team_stats(9825, 27110)  # Team tournament stats
+await fotmob.get_team_next_fixture(9825)
+await fotmob.get_team_last_fixture(9825)
+await fotmob.get_team_next_fixtures(9825)
+await fotmob.get_team_last_fixtures(9825)
 ```
 
 # Player Methods
@@ -100,7 +106,7 @@ await fotmob.get_tv_listings(4813416, "GB")  # TV listings
 await fotmob.todays_games()  # Today's matches (convenience method)
 await fotmob.live_games()  # Live matches (convenience method)
 await fotmob.get_fixture_difficulty(47)  # Fixture difficulty
-await fotmob.get_historical_table(9825, "tables.ext.47.fot.gz")  # Historical table
+await fotmob.get_historical_table(9825)  # Historical table
 
 # Image URLs (no API call needed)
 fotmob.get_team_logo(9825)  # Team logo URL

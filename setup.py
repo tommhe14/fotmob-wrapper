@@ -6,7 +6,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="fotmob-wrapper",
-    version="0.0.3",  
+    version="0.0.4",  
     description="Python API wrapper for FotMob undocumented API",
     long_description=README,
     long_description_content_type="text/markdown",
